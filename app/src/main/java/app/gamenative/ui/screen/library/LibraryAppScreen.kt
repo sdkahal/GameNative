@@ -19,6 +19,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -750,16 +751,25 @@ internal fun AppScreenContent(
                 // itself, however, has to stay tappable, so it's pushed inwards by whichever
                 // is larger of the status bar inset or the cutout inset on each affected
                 // edge before the visual 16dp padding is applied.
+                val safeInsets = WindowInsets.safeDrawing.asPaddingValues()
+                val maxVerticalInset = maxOf(
+                    safeInsets.calculateTopPadding(),
+                    safeInsets.calculateBottomPadding()
+                )
                 ActionIconButton(
                     icon = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.back),
                     onClick = onBack,
                     modifier = Modifier
                         .windowInsetsPadding(
-                            WindowInsets.safeDrawing
-                                .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+                            WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
                         )
-                        .padding(16.dp),
+                        .padding(
+                            top = maxVerticalInset + 16.dp,
+                            bottom = maxVerticalInset + 16.dp,
+                            start = 16.dp,
+                            end = 16.dp
+                        ),
                 )
 
                 // Bottom overlay with title and action bar
