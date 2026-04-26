@@ -121,19 +121,3 @@ jobs:
       with:
         name: app-release-signed
         path: ${{ github.workspace }}/universal.apk
-
-    - name: Build changelog text
-      id: changelog
-      run: |
-        text=$(jq -r '.commits[] | "• " + (.message | split("\n")[0]) + " (" + .id[0:7] + ")"' "$GITHUB_EVENT_PATH")
-        echo 'log<<EOF' >>"$GITHUB_OUTPUT"
-        echo "$text" >>"$GITHUB_OUTPUT"
-        echo 'EOF' >>"$GITHUB_OUTPUT"
-
-    - name: Post to Discord
-      env:
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      run: |
-        artifact_url="https://nightly.link/utkarshdalal/GameNative/actions/runs/${{ github.run_id }}/app-release-signed.zip"
-        payload='{"content":"**New Android build**\nDownload: '"$artifact_url"'\n\nChanges:\n'"${{ steps.changelog.outputs.log }}"'"}'
-        curl -H 'Content-Type: application/json' -d "$payload" "$DISCORD_WEBHOOK_URL"
