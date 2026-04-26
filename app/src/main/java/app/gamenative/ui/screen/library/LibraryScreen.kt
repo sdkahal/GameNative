@@ -9,6 +9,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -475,10 +476,14 @@ private fun LibraryScreenContent(
     // to bleed through the cutout, so AppScreenContent insets only the elements that
     // need to stay tappable (e.g. the back button) instead.
     val safePaddingModifier = if (selectedLibraryItem == null) {
-        Modifier.windowInsetsPadding(
-            WindowInsets.safeDrawing
-                .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+        val safeInsets = WindowInsets.safeDrawing.asPaddingValues()
+        val maxVerticalInset = maxOf(
+        safeInsets.calculateTopPadding(),
+        safeInsets.calculateBottomPadding()
         )
+        Modifier
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            .padding(top = maxVerticalInset, bottom = maxVerticalInset)
     } else {
         Modifier
     }
