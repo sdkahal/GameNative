@@ -758,8 +758,7 @@ internal fun AppScreenContent(
                     onClick = onBack,
                     modifier = Modifier
                         .windowInsetsPadding(
-                            WindowInsets.statusBars
-                                .union(WindowInsets.displayCutout)
+                            WindowInsets.safeDrawing
                                 .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
                         )
                         .padding(16.dp),
