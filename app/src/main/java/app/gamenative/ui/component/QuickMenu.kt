@@ -403,7 +403,7 @@ fun QuickMenu(
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .weight(1f, fill = false)
+                                    .weight(1f)
                                     .verticalScroll(navRailScrollState),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
