@@ -722,7 +722,6 @@ private fun LibraryScreenContent(
         Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .then(safePaddingModifier)
             .focusRequester(rootFocusRequester)
             .focusable()
             .onFocusChanged { focusState ->
@@ -864,7 +863,7 @@ private fun LibraryScreenContent(
     ) {
         if (selectedAppId == null) {
             // Use Box to allow content to scroll behind the tab bar
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().then(safePaddingModifier)) {
                 val hasSteamCredentials = PrefManager.refreshToken.isNotEmpty() && PrefManager.username.isNotEmpty()
                 // When on Steam/GOG/Epic/Amazon tab and not logged in, or LOCAL tab with no custom games, show splash
                 val showEmptyStateSplash = when (state.currentTab) {
@@ -996,6 +995,58 @@ private fun LibraryScreenContent(
                             .fillMaxWidth(),
                     )
                 }
+
+                // Bottom action bar
+                if (selectedAppId == null && !state.isOptionsPanelOpen && !isSystemMenuOpen) {
+                    val libraryActions = if (state.isSearching) {
+                        listOf(
+                            LibraryActions.select,
+                            GamepadAction(
+                                button = GamepadButton.B,
+                                labelResId = R.string.back,
+                                onClick = {
+                                    onIsSearching(false)
+                                    onSearchQuery("")
+                                },
+                            ),
+                        )
+                    } else {
+                        listOf(
+                            LibraryActions.select,
+                            GamepadAction(
+                                button = GamepadButton.SELECT,
+                                labelResId = R.string.options,
+                                onClick = { onOptionsPanelToggle(true) },
+                            ),
+                            GamepadAction(
+                                button = GamepadButton.START,
+                                labelResId = R.string.action_system,
+                                onClick = { isSystemMenuOpen = true },
+                            ),
+                            GamepadAction(
+                                button = GamepadButton.B,
+                                labelResId = R.string.menu,
+                                onClick = { isSystemMenuOpen = true },
+                            ),
+                            GamepadAction(
+                                button = GamepadButton.Y,
+                                labelResId = R.string.search,
+                                onClick = { onIsSearching(true) },
+                            ),
+                            GamepadAction(
+                                button = GamepadButton.X,
+                                labelResId = R.string.action_add_game,
+                                onClick = onAddCustomGameClick,
+                            ),
+                        )
+                    }
+
+                    GamepadActionBar(
+                        actions = libraryActions,
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                        visible = true,
+                    )
+                }
             }
         } else {
             LibraryDetailPane(
@@ -1014,58 +1065,6 @@ private fun LibraryScreenContent(
                         onTestGraphics(libraryItem.appId)
                     }
                 },
-            )
-        }
-
-        // Bottom action bar
-        if (selectedAppId == null && !state.isOptionsPanelOpen && !isSystemMenuOpen) {
-            val libraryActions = if (state.isSearching) {
-                listOf(
-                    LibraryActions.select,
-                    GamepadAction(
-                        button = GamepadButton.B,
-                        labelResId = R.string.back,
-                        onClick = {
-                            onIsSearching(false)
-                            onSearchQuery("")
-                        },
-                    ),
-                )
-            } else {
-                listOf(
-                    LibraryActions.select,
-                    GamepadAction(
-                        button = GamepadButton.SELECT,
-                        labelResId = R.string.options,
-                        onClick = { onOptionsPanelToggle(true) },
-                    ),
-                    GamepadAction(
-                        button = GamepadButton.START,
-                        labelResId = R.string.action_system,
-                        onClick = { isSystemMenuOpen = true },
-                    ),
-                    GamepadAction(
-                        button = GamepadButton.B,
-                        labelResId = R.string.menu,
-                        onClick = { isSystemMenuOpen = true },
-                    ),
-                    GamepadAction(
-                        button = GamepadButton.Y,
-                        labelResId = R.string.search,
-                        onClick = { onIsSearching(true) },
-                    ),
-                    GamepadAction(
-                        button = GamepadButton.X,
-                        labelResId = R.string.action_add_game,
-                        onClick = onAddCustomGameClick,
-                    ),
-                )
-            }
-
-            GamepadActionBar(
-                actions = libraryActions,
-                modifier = Modifier.align(Alignment.BottomCenter),
-                visible = true,
             )
         }
 
