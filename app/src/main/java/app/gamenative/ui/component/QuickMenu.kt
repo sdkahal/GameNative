@@ -398,11 +398,13 @@ fun QuickMenu(
                             modifier = Modifier
                                 .width(64.dp)
                                 .fillMaxHeight()
-                                .verticalScroll(navRailScrollState)
                                 .focusGroup(),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Column(
+                                modifier = Modifier
+                                    .weight(1f, fill = false)
+                                    .verticalScroll(navRailScrollState),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
