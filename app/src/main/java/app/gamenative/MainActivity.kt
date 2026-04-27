@@ -522,6 +522,9 @@ class MainActivity : ComponentActivity() {
     private fun applyImmersiveMode() {
         if (desiredSystemUiVisible) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.setDecorFitsSystemWindows(true)
+                window.statusBarColor = TRANSPARENT
+                window.navigationBarColor = TRANSPARENT
                 window.insetsController?.show(
                     android.view.WindowInsets.Type.statusBars() or
                         android.view.WindowInsets.Type.navigationBars(),
