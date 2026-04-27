@@ -472,7 +472,7 @@ private fun LibraryScreenContent(
         val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
         val hideStatusBar = PrefManager.hideStatusBarWhenNotInGame
 
-        return if (hideStatusBar) {
+        return if (!hideStatusBar) {
             PaddingValues(0.dp)
         } else if (isPortrait) {
             PaddingValues(
