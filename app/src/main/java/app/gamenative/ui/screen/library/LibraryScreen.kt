@@ -722,7 +722,6 @@ private fun LibraryScreenContent(
         Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .then(safePaddingModifier)
             .focusRequester(rootFocusRequester)
             .focusable()
             .onFocusChanged { focusState ->
@@ -922,7 +921,7 @@ private fun LibraryScreenContent(
                                 selectedLibraryItem = state.appInfoList.find { it.appId == appId }
                             },
                             onRefresh = onRefresh,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize().then(safePaddingModifier),
                             firstCarouselItemFocusRequester = carouselFocusRequester,
                             focusTargetListIndex = currentCarouselFocusTargetIndex(),
                             onFocusedIndexChanged = { carouselFocusTargetListIndex = it },
@@ -940,7 +939,7 @@ private fun LibraryScreenContent(
                                 selectedLibraryItem = state.appInfoList.find { it.appId == appId }
                             },
                             onRefresh = onRefresh,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize().then(safePaddingModifier),
                         )
                     }
                 }
