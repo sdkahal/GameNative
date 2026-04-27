@@ -14,12 +14,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.displayCutoutPadding
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -459,17 +463,27 @@ private fun LibraryScreenContent(
     }
 
 
-    // Apply top padding differently for list vs game detail pages.
-    // On the game page we want to hide the top padding when the status bar is hidden.
-    val safePaddingModifier = if (selectedLibraryItem != null) {
-        // Detail (game) page: use actual status bar height when status bar is visible,
-        // or 0.dp when status bar is hidden
-        val topPadding = if (PrefManager.hideStatusBarWhenNotInGame) {
-            0.dp
-        } else {
-            WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-        }
-        Modifier.padding(top = topPadding)
+    @Composable
+    fun rememberSafeEdgePadding(): PaddingValues {
+        val layoutDirection = LocalLayoutDirection.current
+        val density = LocalDensity.current
+        val cutout = WindowInsets.displayCutout.asPaddingValues(density)
+        val minDp: Dp = 16.dp
+
+        val left = cutout.calculateLeftPadding(layoutDirection)
+        val right = cutout.calculateRightPadding(layoutDirection)
+        val horizontal = maxOf(left, right, minDp)
+
+        return PaddingValues(
+            start = horizontal,
+            end = horizontal,
+            top = maxOf(cutout.calculateTopPadding(layoutDirection), minDp),
+            bottom = minDp,
+        )
+    }
+
+    val safePaddingModifier = if (selectedLibraryItem == null) {
+        Modifier.padding(rememberSafeEdgePadding())
     } else {
         Modifier
     }
