@@ -477,7 +477,7 @@ private fun LibraryScreenContent(
         return PaddingValues(
             start = horizontal,
             end = horizontal,
-            top = maxOf(cutout.calculateTopPadding(layoutDirection), minDp),
+            top = maxOf(cutout.calculateTopPadding(), minDp),
             bottom = minDp,
         )
     }
