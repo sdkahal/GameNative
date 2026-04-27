@@ -14,17 +14,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -464,25 +463,27 @@ private fun LibraryScreenContent(
     }
 
 
-    // Padding for the library *list* view (tab bar, grid, search bar) so content
-    // never draws behind the display cutout. The window now opts in to
-    // LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES via Theme.Pluvia, so:
-    //   * Status bar visible (portrait):   statusBars insets already cover the top notch.
-    //   * Status bar hidden (portrait):    statusBars insets are 0; displayCutout supplies
-    //                                       the notch height so content isn't behind the notch.
-    //   * Landscape (cutout on a side):    statusBars is top-only; displayCutout supplies
-    //                                       the side inset so the tab bar isn't clipped.
-    // Bottom is intentionally excluded so scroll content can reach the bottom edge.
-    //
-    // The detail (game) page deliberately does NOT use this — the hero image is meant
-    // to bleed through the cutout, so AppScreenContent insets only the elements that
-    // need to stay tappable (e.g. the back button) instead.
-    val safePaddingModifier = if (selectedLibraryItem == null) {
-        Modifier.windowInsetsPadding(
-            WindowInsets.statusBars
-                .union(WindowInsets.displayCutout)
-                .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+    @Composable
+    fun rememberSafeEdgePadding(): PaddingValues {
+        val layoutDirection = LocalLayoutDirection.current
+        val density = LocalDensity.current
+        val cutout = WindowInsets.displayCutout.asPaddingValues(density)
+        val minDp: Dp = 16.dp
+
+        val left = cutout.calculateLeftPadding(layoutDirection)
+        val right = cutout.calculateRightPadding(layoutDirection)
+        val horizontal = maxOf(left, right, minDp)
+
+        return PaddingValues(
+            start = horizontal,
+            end = horizontal,
+            top = maxOf(cutout.calculateTopPadding(layoutDirection), minDp),
+            bottom = minDp,
         )
+    }
+
+    val safePaddingModifier = if (selectedLibraryItem == null) {
+        Modifier.padding(rememberSafeEdgePadding())
     } else {
         Modifier
     }

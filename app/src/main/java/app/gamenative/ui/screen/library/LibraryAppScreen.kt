@@ -23,20 +23,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
@@ -634,6 +635,25 @@ internal fun AppScreenContent(
         optionsMenuVisible = false
     }
 
+    @Composable
+    fun rememberSafeEdgePadding(): PaddingValues {
+        val layoutDirection = LocalLayoutDirection.current
+        val density = LocalDensity.current
+        val cutout = WindowInsets.displayCutout.asPaddingValues(density)
+        val minDp: Dp = 16.dp
+
+        val left = cutout.calculateLeftPadding(layoutDirection)
+        val right = cutout.calculateRightPadding(layoutDirection)
+        val horizontal = maxOf(left, right, minDp)
+
+        return PaddingValues(
+            start = horizontal,
+            end = horizontal,
+            top = maxOf(cutout.calculateTopPadding(layoutDirection), minDp),
+            bottom = minDp,
+        )
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -757,19 +777,14 @@ internal fun AppScreenContent(
                     contentDescription = stringResource(R.string.back),
                     onClick = onBack,
                     modifier = Modifier
-                        .windowInsetsPadding(
-                            WindowInsets.statusBars
-                                .union(WindowInsets.displayCutout)
-                                .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
-                        )
-                        .padding(16.dp),
+                        .padding(rememberSafeEdgePadding()),
                 )
 
                 // Bottom overlay with title and action bar
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 128.dp, start = 20.dp, end = 20.dp, bottom = 16.dp),
+                        .padding(rememberSafeEdgePadding()).padding(top = 128.dp),
                 ) {
                     // Game title
                     Text(
