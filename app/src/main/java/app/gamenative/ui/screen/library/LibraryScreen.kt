@@ -470,8 +470,11 @@ private fun LibraryScreenContent(
         val cutout = WindowInsets.displayCutout.asPaddingValues(density)
         val minDp: Dp = 16.dp
         val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+        val hideStatusBar = PrefManager.hideStatusBarWhenNotInGame
 
-        return if (isPortrait) {
+        return if (hideStatusBar) {
+            PaddingValues(0.dp)
+        } else if (isPortrait) {
             PaddingValues(
                 top = maxOf(cutout.calculateTopPadding(), minDp),
             )
