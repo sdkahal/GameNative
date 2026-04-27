@@ -641,17 +641,21 @@ internal fun AppScreenContent(
         val density = LocalDensity.current
         val cutout = WindowInsets.displayCutout.asPaddingValues(density)
         val minDp: Dp = 16.dp
+        val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
-        val left = cutout.calculateLeftPadding(layoutDirection)
-        val right = cutout.calculateRightPadding(layoutDirection)
-        val horizontal = maxOf(left, right, minDp)
-
-        return PaddingValues(
-            start = horizontal,
-            end = horizontal,
-            top = maxOf(cutout.calculateTopPadding(), minDp),
-            bottom = minDp,
-        )
+        return if (isPortrait) {
+            PaddingValues(
+                top = maxOf(cutout.calculateTopPadding(), minDp),
+            )
+        } else {
+            val left = cutout.calculateLeftPadding(layoutDirection)
+            val right = cutout.calculateRightPadding(layoutDirection)
+            val horizontal = maxOf(left, right, minDp)
+            PaddingValues(
+                start = horizontal,
+                end = horizontal,
+            )
+        }
     }
 
     Box(
