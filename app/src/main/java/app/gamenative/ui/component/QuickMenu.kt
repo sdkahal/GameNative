@@ -444,9 +444,9 @@ fun QuickMenu(
                                     modifier = Modifier.width(56.dp),
                                     focusRequester = toolsTabFocusRequester,
                                 )
-                            }
 
-                            Spacer(modifier = Modifier.weight(1f))
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
 
                             Box(
                                 modifier = Modifier
