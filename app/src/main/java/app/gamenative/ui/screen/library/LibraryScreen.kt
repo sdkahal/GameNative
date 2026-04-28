@@ -863,7 +863,7 @@ private fun LibraryScreenContent(
     ) {
         if (selectedAppId == null) {
             // Use Box to allow content to scroll behind the tab bar
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().then(safePaddingModifier)) {
                 val hasSteamCredentials = PrefManager.refreshToken.isNotEmpty() && PrefManager.username.isNotEmpty()
                 // When on Steam/GOG/Epic/Amazon tab and not logged in, or LOCAL tab with no custom games, show splash
                 val showEmptyStateSplash = when (state.currentTab) {
