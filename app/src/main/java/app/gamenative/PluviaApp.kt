@@ -17,6 +17,7 @@ import app.gamenative.utils.PlayIntegrity
 import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
+import com.google.android.material.color.DynamicColors
 import com.google.android.play.core.splitcompat.SplitCompatApplication
 import com.posthog.PersonProfiles
 
@@ -50,6 +51,7 @@ class PluviaApp : SplitCompatApplication() {
     override fun onCreate() {
         super.onCreate()
 
+        DynamicColors.applyToActivitiesIfAvailable(this)
         // Allows to find resource streams not closed within GameNative and JavaSteam
         if (BuildConfig.DEBUG) {
             StrictMode.setVmPolicy(

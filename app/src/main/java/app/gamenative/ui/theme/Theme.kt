@@ -14,6 +14,9 @@ import androidx.core.view.WindowCompat
 import com.alorma.compose.settings.ui.base.internal.SettingsTileColors
 import com.alorma.compose.settings.ui.base.internal.SettingsTileDefaults
 import com.materialkolor.PaletteStyle
+import android.os.Build
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.ui.platform.LocalContext
 
 /**
  * Custom color system for Pluvia, extending Material3.
@@ -166,9 +169,16 @@ fun PluviaTheme(
     isDark: Boolean = true, // for now, always force dark theme
     isAmoled: Boolean = false,
     style: PaletteStyle = PaletteStyle.TonalSpot,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = DarkColorScheme
+    val context = LocalContext.current
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            dynamicDarkColorScheme(context)
+        }
+        else -> DarkColorScheme
+    }
     val pluviaColors = if (isDark) DarkPluviaColors else DarkPluviaColors // We can use LightPluviaColors when ready
 
     val view = LocalView.current
