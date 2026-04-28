@@ -477,11 +477,11 @@ private fun LibraryScreenContent(
     // The detail (game) page deliberately does NOT use this — the hero image is meant
     // to bleed through the cutout, so AppScreenContent insets only the elements that
     // need to stay tappable (e.g. the back button) instead.
-    val showStatusBar = PrefManager.showSystemBar
+    val hideStatusBar = PrefManager.hideStatusBarWhenNotInGame
 
     val safePaddingModifier = if (selectedLibraryItem == null) {
         Modifier.windowInsetsPadding(
-            if (!showStatusBar) {
+            if (hideStatusBar) {
                 WindowInsets.displayCutout
             } else {
                 WindowInsets.statusBars.union(WindowInsets.displayCutout)
